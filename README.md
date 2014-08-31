@@ -346,7 +346,7 @@ create `date_functions.rb`, etc.
 20. spec for default engine
     * skip columns, sheet#row returns ''
 21. API to change engine
-22. chaznged office example to use conditional styles
+22. changed office example to use conditional styles
 23. added `empty_row` (in all engines)
 24. explained examples in top of files
 25. wrote a gem description, reused examples
