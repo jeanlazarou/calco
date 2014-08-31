@@ -286,7 +286,7 @@ Start     End       Duration
 
 The time values are real time values, not strings. The formulas are computed.
 
-## TODO
+## Todo
 
 0. office engine
    * problems with UTF-8
@@ -299,7 +299,7 @@ The time values are real time values, not strings. The formulas are computed.
    * absolute $A$5
 3. CSV engine (using the calculator)
 
-## DONE
+## Done
 
 1. specs: func not found, add func, func arity (also check error)
 2. build-in function, improve with function registration with types and args,
