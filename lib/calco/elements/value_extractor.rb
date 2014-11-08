@@ -31,7 +31,7 @@ module Calco
 
     def generate row
       
-      return nil if @variable.absolute_row and @variable.absolute_row != row
+      return nil if @variable.absolute_row && @variable.absolute_row != row
 
       @engine.value(self)
       

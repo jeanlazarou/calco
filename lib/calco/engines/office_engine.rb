@@ -52,7 +52,7 @@ module Calco
     
     def write_row sheet, row_id
 
-      return if row_id == 0 and sheet.has_titles?
+      return if row_id == 0 && sheet.has_titles?
       
       row_id += 1 # office sheet indexes start at 1
       
@@ -75,7 +75,7 @@ module Calco
     def generate_cell row_number, column, cell_style, column_style, column_type
 
       return '<table:table-cell/>' unless column
-      return '<table:table-cell/>' if column.absolute_row and column.absolute_row != row_number
+      return '<table:table-cell/>' if column.absolute_row && column.absolute_row != row_number
 
       cell = column.generate(row_number)
 

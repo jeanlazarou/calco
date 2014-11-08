@@ -15,7 +15,7 @@ module Calco
 
     def write_row sheet, row_id
 
-      row_id += 1 if row_id > 0 and sheet.has_titles?
+      row_id += 1 if row_id > 0 && sheet.has_titles?
 
       cells = sheet.row(row_id)
 

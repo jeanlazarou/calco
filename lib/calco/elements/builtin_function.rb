@@ -11,10 +11,10 @@ module Calco
     # of class objects
     def self.declare name, arity, type = :any
 
-      unless arity == :n or arity.is_a?(Integer)
+      unless arity == :n || arity.is_a?(Integer)
         raise ArgumentError, "Artity must be an integer or :n but was a #{arity.class}"
       end
-      unless type.is_a?(Class) or (type.respond_to?(:all?) and type.all?{|t| t.is_a?(Class)})
+      unless type.is_a?(Class) || (type.respond_to?(:all?) && type.all?{|t| t.is_a?(Class)})
         raise ArgumentError, "Type should be a Class or an array of Class objects" 
       end
       

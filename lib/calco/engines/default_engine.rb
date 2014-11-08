@@ -105,9 +105,9 @@ module Calco
       if ! element.respond_to?(:value)
         element.inspect
       elsif element.value.is_a?(Time)
-        res = element.value.strftime("%H:%M:%S")
+        element.value.strftime("%H:%M:%S")
       elsif element.value.is_a?(Date)
-        res = element.value.strftime("%Y-%m-%d")
+        element.value.strftime("%Y-%m-%d")
       else
         element.value.inspect
       end

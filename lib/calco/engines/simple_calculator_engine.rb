@@ -30,7 +30,7 @@ module Calco
     
     def write_row sheet, row_id
     
-      return if sheet.has_titles? and row_id == 0
+      return if sheet.has_titles? && row_id == 0
       
       names = column_names(sheet)
       
@@ -42,7 +42,7 @@ module Calco
       
         next unless value
         
-        value = value.to_s if value.is_a?(Date) or value.is_a?(Time)
+        value = value.to_s if value.is_a?(Date) || value.is_a?(Time)
         
         @out_stream.write "%#{longest_name}s = #{value.inspect}\n" % names[i]
         

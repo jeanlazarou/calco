@@ -64,7 +64,7 @@ module Calco
     #    id           => id associated to the column
     def column name, options = {}
 
-      if name.is_a?(Numeric) or name.is_a?(String)
+      if name.is_a?(Numeric) || name.is_a?(String)
         @columns << Constant.wrap(name)
       elsif name.is_a?(ValueExtractor)
         @columns << name
@@ -150,7 +150,7 @@ module Calco
         return
       end
       
-      if new_content.is_a?(Numeric) or new_content.is_a?(String)
+      if new_content.is_a?(Numeric) || new_content.is_a?(String)
         new_content = Constant.new(new_content)
         assign_engine new_content, @engine
       elsif @definitions.variable?(new_content)
@@ -328,7 +328,7 @@ module Calco
     
     def assign_engine el, engine
 
-      return unless el.is_a?(Calco::Element) or el.is_a?(Calco::Style)
+      return unless el.is_a?(Calco::Element) || el.is_a?(Calco::Style)
 
       current_engine = el.instance_variable_get(:@engine)
       

@@ -25,7 +25,7 @@ module Calco
 
     def generate row
 
-      if self.reference_type == :absolute and self.absolute_row != row
+      if self.reference_type == :absolute && self.absolute_row != row
         nil
       else
         @statement.generate(row)
