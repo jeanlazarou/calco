@@ -7,6 +7,7 @@ require 'tempfile'
 require 'rexml/document'
 
 require 'calco'
+require 'calco/xml_builder'
 
 module Calco
 
@@ -77,67 +78,24 @@ module Calco
       return '<table:table-cell/>' unless column
       return '<table:table-cell/>' if column.absolute_row && column.absolute_row != row_number
 
+      currency = nil
+      
       cell = column.generate(row_number)
 
-      if cell_style
-        cell = cell.to_s + cell_style.generate(row_number)
-      end
-
-      if column_style
-        column_style = %[table:style-name="#{column_style}"]
-      else
-        column_style = ''
-      end
+      cell_style = cell_style.generate(row_number) if cell_style
 
       if column_type
 
         if column_type == '%'
-          column_type = %[office:value-type="percentage"]
+          column_type = 'percentage'
         elsif column_type =~ /\$([A-Z]{3})/
-          column_type = %[office:value-type="currency" office:currency="#{$1}"]
-        else
-          column_type = %[office:value-type="#{column_type}"]
+          currency = "#{$1}"
+          column_type = 'currency' 
         end
 
       end
 
-      if column.is_a?(Formula)
-
-        column_type = 'office:value-type="float"' unless column_type
-
-        %[<table:table-cell #{column_style} #{column_type} table:formula="of:=#{cell}" />]
-
-      elsif column.respond_to?(:value)
-
-        if column.value.nil?
-          
-          "<table:table-cell/>"
-          
-        elsif column.value.is_a?(Numeric)
-
-          column_type = 'office:value-type="float"' unless column_type
-
-          %[<table:table-cell #{column_style} #{column_type} office:value="#{cell}"/>]
-
-        elsif column.value.is_a?(Date)
-
-          column_type = 'office:value-type="date"' unless column_type
-
-          %[<table:table-cell #{column_style} #{column_type} office:date-value="#{cell.to_s}"/>]
-
-        else
-
-          column_type = 'office:value-type="string"' unless column_type
-
-          %[
-            <table:table-cell #{column_style} #{column_type}>
-              <text:p><![CDATA[#{cell}]]></text:p>
-            </table:table-cell>
-          ]
-
-        end
-
-      end
+      office_cell column, column_style, column_type, currency, cell.to_s, cell_style
 
     end
 
@@ -159,7 +117,7 @@ module Calco
     end
 
     def style statement, row
-      "+ORG.OPENOFFICE.STYLE(#{statement.generate(row)})"
+      "&amp;T(ORG.OPENOFFICE.STYLE(#{statement.generate(row)}))"
     end
 
     def operator op
@@ -182,7 +140,69 @@ module Calco
 
     private
 
-    # returns the parent table and removes template/example rows, also returns
+    def office_cell column, column_style, column_type, currency, value, cell_style
+
+      xml = XMLBuilder.new('table:table-cell')
+      
+      if column.is_a?(Formula)
+
+        column_type = 'float' unless column_type
+
+        xml << {'table:formula' => "of:=#{value}#{cell_style}"}
+
+      elsif column.respond_to?(:value)
+      
+        if column.value.nil?
+        
+          return xml.build
+        
+        elsif column.value.is_a?(Numeric)
+
+          column_type = 'float' unless column_type
+
+          xml << {'office:value' => "#{value}#{cell_style}"} unless cell_style
+
+        elsif column.value.is_a?(Date)
+
+          column_type = 'date' unless column_type
+
+          xml << {'office:date-value' => "#{value}#{cell_style}"} unless cell_style
+
+        else
+
+          column_type = 'string' unless column_type
+
+          if cell_style
+            value = office_string_escape(value)
+          else
+            xml.add_child 'text:p', office_string_value(value)
+          end
+          
+        end
+
+        if cell_style
+          xml << {'table:formula' => "of:=#{value}#{cell_style}"}
+        end
+        
+      end
+
+      xml << {'table:style-name'  => column_style}   if column_style
+      xml << {'office:currency'   => currency}       if currency
+      xml << {'office:value-type' => column_type}
+      
+      xml.build
+      
+    end
+
+    def office_string_value str
+      str.gsub('&quot;', '"') 
+    end
+    
+    def office_string_escape str
+      '"' + str.gsub('&quot;', '""') + '"'
+    end
+    
+    # returns the parent table and removes template/examsple rows, also returns
     # the first template/example row (to find cell styles for instance)
     def retrieve_template_row doc, first_row_is_header
 

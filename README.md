@@ -288,16 +288,16 @@ The time values are real time values, not strings. The formulas are computed.
 
 ## Todo
 
-0. office engine
-   * problems with UTF-8
-0. change styles when generating...
-2. specs for office engine
+1. mutliple sheets
+2. cross-sheet references
+3. specs for office engine
    * currencies
    * percentages
    * time
    * date, now
    * absolute $A$5
-3. CSV engine (using the calculator)
+   * styles (both formulas and values)
+4. CSV engine (using the calculator)
 
 ## Done
 
@@ -350,6 +350,7 @@ create `date_functions.rb`, etc.
 23. added `empty_row` (in all engines)
 24. explained examples in top of files
 25. wrote a gem description, reused examples
+26. use formula when applying dynamic styles to values
 
 ## Contributing
 
