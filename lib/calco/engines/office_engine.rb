@@ -1,54 +1,31 @@
 require 'date'
 
-require 'zip'
-require 'tmpdir'
-require 'pathname'
-require 'tempfile'
-require 'rexml/document'
-
 require 'calco'
 require 'calco/xml_builder'
+
+require_relative 'office_file_manager'
 
 module Calco
 
   class OfficeEngine < DefaultEngine
 
-    def initialize ods_template, first_row_is_header = true
+    def initialize ods_template
       @ods_template = ods_template
-      @first_row_is_header = first_row_is_header
     end
     
     # output is a String (as a file name)
     def save doc, to_filename, &data_iterator
 
-      content_xml_file = Tempfile.new('office-gen')
-      result_xml_file = Tempfile.new('office-gen')
+      @file_manager = OfficeFileManager.new(@ods_template)
       
-      Zip::File.open(@ods_template) do |zipfile|
-        content = zipfile.read("content.xml")
-        open(content_xml_file, "w") {|out| out.write content}
-      end
+      data_iterator.call(doc)
 
-      write_result_content doc, content_xml_file, result_xml_file, @first_row_is_header, &data_iterator
-
-      FileUtils.cp(@ods_template, to_filename)
-
-      Zip::File.open(to_filename) do |zipfile|
-
-        zipfile.get_output_stream("content.xml") do |os|
-
-          File.open(result_xml_file).each_line do |line|
-            os.puts line
-          end
-
-        end
-
-      end
-
+      @file_manager.save doc, to_filename
+      
     end
 
-    def empty_row
-      @out_stream.write '<table:table-row/>'
+    def empty_row sheet
+      @file_manager.add_empty_row sheet
     end
     
     def write_row sheet, row_id
@@ -59,18 +36,18 @@ module Calco
       
       cells = sheet.row(row_id)
 
-      @out_stream.write '<table:table-row>'
+      @file_manager.add_row sheet do |stream|
+      
+        cells.each_index do |i|
 
-      cells.each_index do |i|
+          cell = cells[i]
 
-        cell = cells[i]
+          stream.write cell
 
-        @out_stream.write cell
+        end
 
       end
-
-      @out_stream.write '</table:table-row>'
-
+      
     end
 
     def generate_cell row_number, column, cell_style, column_style, column_type
@@ -200,82 +177,6 @@ module Calco
     
     def office_string_escape str
       '"' + str.gsub('&quot;', '""') + '"'
-    end
-    
-    # returns the parent table and removes template/examsple rows, also returns
-    # the first template/example row (to find cell styles for instance)
-    def retrieve_template_row doc, first_row_is_header
-
-      root = doc.root
-
-      count = 0
-      template_row = nil
-
-      table = root.elements['//table:table']
-      table.each_element('table:table-row') do |row|
-
-        if first_row_is_header && count == 0
-          # keep the header row
-        else
-
-          table.delete_element(row)
-
-          template_row = row unless template_row
-
-        end
-
-        count += 1
-
-      end
-
-      raise "Cannot find template row in #{@ods_template}" unless template_row
-
-      return table, template_row
-
-    end
-
-    def create_temporary xml, to_filename
-
-      to = Pathname.new(to_filename)
-
-      temp_file = Tempfile.new('office-gen', to.dirname.to_s)
-
-      File.open(temp_file, 'w') { |stream| stream.puts xml }
-
-      temp_file
-
-    end
-
-    def write_result_content doc, content_xml_file, result_xml_file, first_row_is_header, &data_iterator
-
-      file = File.new(content_xml_file)
-
-      xml = REXML::Document.new(file)
-
-      table, template_row = retrieve_template_row(xml, first_row_is_header)
-
-      table.add_text "%%%Insert data here%%%\n"
-
-      temp_file = create_temporary(xml, result_xml_file)
-
-      File.open(result_xml_file, 'w') do |stream|
-
-        @out_stream = stream
-
-        File.open(temp_file, 'r').each do |line|
-
-          if line =~ /(.*)%%%Insert data here%%%(.*)/
-            @out_stream.write $1
-            data_iterator.call(doc)
-            @out_stream.write $2
-          else
-            @out_stream.write line
-          end
-
-        end
-
-      end
-
     end
 
   end

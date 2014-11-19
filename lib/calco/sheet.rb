@@ -257,7 +257,7 @@ module Calco
 
     # set "next row" as empty, delegated to current engine
     def empty_row
-      @engine.empty_row
+      @engine.empty_row self
     end
     
     # Calls the passed block for every Element, the cell definition,

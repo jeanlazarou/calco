@@ -25,7 +25,7 @@ module Calco
       
     end
 
-    def empty_row
+    def empty_row sheet
     end
 
     def write_row sheet, row_id

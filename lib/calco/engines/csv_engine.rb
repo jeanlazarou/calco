@@ -9,7 +9,7 @@ module Calco
       @col_sep, @quote_char = col_sep, quote_char
     end
 
-    def empty_row
+    def empty_row sheet
       @out_stream.write CSV.generate_line([])
     end
 

@@ -234,6 +234,60 @@ See specifications
 * [spec/csv_engine_spec.rb](spec/csv_engine_spec.rb)
 * [spec/calculator_engine_spec.rb](spec/calculator_engine_spec.rb)
 
+## LibreOffice engine
+
+The office engine uses a template file when it writes the output file. It 
+searches for each sheet a template sheet in the template file after its name.
+
+If the engine finds a template sheet, it removes the content and inserts the
+generated rows. If the template sheet contains the header, the engine does
+not remove it (using the `has_header` directive).
+
+```ruby
+doc.save($stdout) do
+
+  sheet = doc.current
+  
+  sheet[:some_date] = Date.new(1934, 10, 3)
+  sheet.write_row 3
+  
+  sheet[:some_date] = Date.new(2004, 6, 19)
+  sheet.write_row 5
+  
+end
+```
+
+If the engine does not find a template sheet, it appends a new sheet.
+
+Here is an example:
+
+```ruby
+engine = Calco::OfficeEngine.new('names.ods')
+
+doc = spreadsheet(engine) do
+
+  definitions do
+
+    set name: ''
+    
+  end
+  
+  sheet('Main') do
+
+    has_titles true
+
+    column value_of(:name)
+
+  end
+  
+end
+```
+
+The code creates an office engine and sets a template files named `names.ods`.
+
+The spreadsheet definition defines a sheet named _Main_ and says that the
+template sheet contains the header row (see `has_titles true`).
+
 ## Tips
 
 ### Titles row...
@@ -246,7 +300,7 @@ returns headers or empty if no header is set (see
 [spec/header_row_spec.rb](spec/header_row_spec.rb)).
 
 A sheet is marked as having a header row (a first row with titles) by using
-the `:title` option or the `has_title` method.
+the `:title` option or the `has_titles` method.
 
 The use of the header row depends on the engine (the office engine does not
 write the column titles).
@@ -288,16 +342,15 @@ The time values are real time values, not strings. The formulas are computed.
 
 ## Todo
 
-1. mutliple sheets
-2. cross-sheet references
-3. specs for office engine
+1. cross-sheet references
+2. specs for office engine
    * currencies
    * percentages
    * time
    * date, now
    * absolute $A$5
    * styles (both formulas and values)
-4. CSV engine (using the calculator)
+3. CSV engine (using the calculator)
 
 ## Done
 
@@ -351,6 +404,7 @@ create `date_functions.rb`, etc.
 24. explained examples in top of files
 25. wrote a gem description, reused examples
 26. use formula when applying dynamic styles to values
+27. mutliple sheets
 
 ## Contributing
 
