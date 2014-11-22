@@ -241,21 +241,7 @@ searches for each sheet a template sheet in the template file after its name.
 
 If the engine finds a template sheet, it removes the content and inserts the
 generated rows. If the template sheet contains the header, the engine does
-not remove it (using the `has_header` directive).
-
-```ruby
-doc.save($stdout) do
-
-  sheet = doc.current
-  
-  sheet[:some_date] = Date.new(1934, 10, 3)
-  sheet.write_row 3
-  
-  sheet[:some_date] = Date.new(2004, 6, 19)
-  sheet.write_row 5
-  
-end
-```
+not remove it (using the `has_titles` directive).
 
 If the engine does not find a template sheet, it appends a new sheet.
 
