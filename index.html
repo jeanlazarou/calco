@@ -1,0 +1,494 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Calco by jeanlazarou</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Calco</h1>
+        <p class="header">Implements a DSL used to create and define the content of spreadsheet documents</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/jeanlazarou/calco/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/jeanlazarou/calco/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/jeanlazarou/calco">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/jeanlazarou">jeanlazarou</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="calco" class="anchor" href="#calco" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calco</h1>
+
+<p>I started this project after spending time once again on code generating <code>CSV</code>
+files that we open with a spreadsheet software, add formatting, calculations, 
+etc. The final spreadsheet document is a tool for the users with the current 
+data snapshot.</p>
+
+<p>The code generating the <code>CSV</code> file can run several times but we have to manually
+re-create the spreadsheet document.</p>
+
+<p><em>Calco</em> tries to separate the data from the spreadsheet presentation and the all
+the calculations.</p>
+
+<p><em>Calco</em> implements a DSL (domain specific language) that abstracts the 
+calculations and the basic needs for styling and formatting.</p>
+
+<p>It generates a spreadsheet document in different formats depending on the 
+selected engine.</p>
+
+<p>The output depends on the engine. The office (<a href="https://www.libreoffice.org"><em>LibreOffice</em></a>
+or <a href="http://www.openoffice.org/"><em>OpenOffice</em></a>) engine uses an input document as 
+template for more sophisticated layouts. The <code>DefaultEngine</code> writes simple text 
+useful to check the spreadsheet definition.</p>
+
+<p>A spreadsheet contains one or more sheets.</p>
+
+<p>A sheet contain cells (viewed as rows and columns).</p>
+
+<p>A cell can contain:</p>
+
+<ul>
+<li>literal values (like numbers, dates, times or strings)</li>
+<li>references to other cells</li>
+<li>formulas or functions combining literal values, references, conditionals, 
+arithmetics expressions and calls to built-in functions</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-k">gem</span> <span class="pl-s1"><span class="pl-pds">'</span>calco<span class="pl-pds">'</span></span></pre></div>
+
+<p>And then execute:</p>
+
+<div class="highlight highlight-bash"><pre>$ bundle</pre></div>
+
+<p>Or install it as:</p>
+
+<div class="highlight highlight-bash"><pre>$ gem install calco</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="running-the-specification" class="anchor" href="#running-the-specification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the specification:</h3>
+
+<div class="highlight highlight-bash"><pre>$ rspec spec</pre></div>
+
+<p>Try running specifications with format output...</p>
+
+<div class="highlight highlight-bash"><pre>$ rspec -f d</pre></div>
+
+<h3>
+<a id="running-the-examples" class="anchor" href="#running-the-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the examples:</h3>
+
+<div class="highlight highlight-bash"><pre>$ ruby examples/example.rb</pre></div>
+
+<p>Replace the <code>example.rb</code> with any file of the example directory.</p>
+
+<h4>
+<a id="example-files-in-order-of-complexity" class="anchor" href="#example-files-in-order-of-complexity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example files (in order of <em>complexity</em>)</h4>
+
+<ul>
+<li><a href="examples/using_date_functions.rb">examples/using_date_functions.rb</a></li>
+<li><a href="examples/example.rb">examples/example.rb</a></li>
+<li><a href="examples/multiplication_tables.rb">examples/multiplication_tables.rb</a></li>
+<li><a href="examples/compute_cells.rb">examples/compute_cells.rb</a></li>
+<li><a href="examples/write_csv.rb">examples/write_csv.rb</a></li>
+<li><a href="examples/write_ods.rb">examples/write_ods.rb</a></li>
+<li><a href="examples/register_function.rb">examples/register_function.rb</a></li>
+</ul>
+
+<h2>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h2>
+
+<p>Let's review the <a href="examples/using_date_functions.rb">using_date_functions.rb</a>
+example.</p>
+
+<p>The code must first require some files, like <code>date</code> as the example is using 
+dates.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="pl-k">require</span> <span class="pl-s1"><span class="pl-pds">'</span>date<span class="pl-pds">'</span></span>
+<span class="pl-k">require</span> <span class="pl-s1"><span class="pl-pds">'</span>calco<span class="pl-pds">'</span></span></pre></div>
+
+<p>Now, create the document definition.</p>
+
+<div class="highlight highlight-ruby"><pre>doc <span class="pl-k">=</span> spreadsheet <span class="pl-k">do</span>
+
+  definitions <span class="pl-k">do</span>
+
+    set <span class="pl-c1">some_date:</span> <span class="pl-s3">Date</span>.today
+
+    function <span class="pl-c1">some_year:</span> year(some_date)
+    function <span class="pl-c1">age:</span> year(today) <span class="pl-k">-</span> year(some_date)
+
+  <span class="pl-k">end</span>
+
+  sheet <span class="pl-k">do</span>
+
+    column value_of(<span class="pl-c1">:some_date</span>)
+
+    column <span class="pl-c1">:some_year</span>
+    column <span class="pl-c1">:age</span>
+
+  <span class="pl-k">end</span>
+
+<span class="pl-k">end</span></pre></div>
+
+<p>The above code uses the spreadsheet method that returns a document created using 
+the given definition (the code block).</p>
+
+<p>The definition contains two parts: the <code>definitions</code> and the <code>sheet</code>.</p>
+
+<p>The <em>definitions</em> part contains all the <em>variable</em> declarations (see 
+<code>set some_date</code>) and the functions (see <code>some_year</code> and <code>age</code>).</p>
+
+<p>The <em>sheet</em> part describes the content of the sheet columns. Here the first 
+columns is going to contain the value of the <code>some_date</code> variable and the next 
+two columns will contain the functions, so that the final spreadsheet is going 
+to compute the values using the functions/formulas.</p>
+
+<p>The last part writes the result to the console (using the <code>$stdout</code> variable).</p>
+
+<div class="highlight highlight-ruby"><pre>doc.save(<span class="pl-vo">$stdout</span>) <span class="pl-k">do </span>|<span class="pl-vo">spreadsheet</span>|
+
+  sheet <span class="pl-k">=</span> spreadsheet.current
+
+  sheet[<span class="pl-c1">:some_date</span>] <span class="pl-k">=</span> <span class="pl-s3">Date</span>.<span class="pl-k">new</span>(<span class="pl-c1">1934</span>, <span class="pl-c1">10</span>, <span class="pl-c1">3</span>)
+  sheet.write_row <span class="pl-c1">3</span>
+
+  sheet[<span class="pl-c1">:some_date</span>] <span class="pl-k">=</span> <span class="pl-s3">Date</span>.<span class="pl-k">new</span>(<span class="pl-c1">2004</span>, <span class="pl-c1">6</span>, <span class="pl-c1">19</span>)
+  sheet.write_row <span class="pl-c1">5</span>
+
+<span class="pl-k">end</span></pre></div>
+
+<p>Saving a document involves calling the <code>save</code> method with a block. The block 
+receives a spreadsheet object. A spreadsheet object has a current sheet. We can 
+assign values to the existing variables (see <code>sheet[:some_date]</code> statements) and 
+ask the spreadsheet to write a row (passing the index of the row), see 
+<code>sheet.write_row 3</code>.</p>
+
+<p>The object passed to the block is the same as the one called to save, next code 
+is doing the same thing.</p>
+
+<div class="highlight highlight-ruby"><pre>doc.save(<span class="pl-vo">$stdout</span>) <span class="pl-k">do</span>
+
+  sheet <span class="pl-k">=</span> doc.current
+
+  sheet[<span class="pl-c1">:some_date</span>] <span class="pl-k">=</span> <span class="pl-s3">Date</span>.<span class="pl-k">new</span>(<span class="pl-c1">1934</span>, <span class="pl-c1">10</span>, <span class="pl-c1">3</span>)
+  sheet.write_row <span class="pl-c1">3</span>
+
+  sheet[<span class="pl-c1">:some_date</span>] <span class="pl-k">=</span> <span class="pl-s3">Date</span>.<span class="pl-k">new</span>(<span class="pl-c1">2004</span>, <span class="pl-c1">6</span>, <span class="pl-c1">19</span>)
+  sheet.write_row <span class="pl-c1">5</span>
+
+<span class="pl-k">end</span></pre></div>
+
+<p>The final output is:</p>
+
+<pre><code>A3: 1934-10-03
+B3: YEAR(A3)
+C3: YEAR(TODAY())-YEAR(A3)
+
+A5: 2004-06-19
+B5: YEAR(A5)
+C5: YEAR(TODAY())-YEAR(A5)
+</code></pre>
+
+<h2>
+<a id="definitions" class="anchor" href="#definitions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Definitions</h2>
+
+<p>As explained in the previous example, building a spreadsheet object requires to
+setup the definitions. What can a definition block contain?</p>
+
+<p>First see the definitions specs: <a href="spec/definitions_spec.rb">spec/definitions_spec.rb</a></p>
+
+<h3>
+<a id="values-variables-references-and-functions" class="anchor" href="#values-variables-references-and-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Values, variables, references and functions</h3>
+
+<p>See specifications</p>
+
+<ul>
+<li><a href="spec/variables_spec.rb">spec/variables_spec.rb</a></li>
+<li><a href="spec/absolute_references_spec.rb">spec/absolute_references_spec.rb</a></li>
+<li><a href="spec/conditions_spec.rb">spec/conditions_spec.rb</a></li>
+<li><a href="spec/functions_spec.rb">spec/functions_spec.rb</a></li>
+<li><a href="spec/errors_spec.rb">spec/errors_spec.rb</a></li>
+<li><a href="spec/smart_types_spec.rb">spec/smart_types_spec.rb</a></li>
+<li><a href="spec/builtin_functions_spec.rb">spec/builtin_functions_spec.rb</a></li>
+</ul>
+
+<h3>
+<a id="aggregations" class="anchor" href="#aggregations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Aggregations...</h3>
+
+<p>See specifications</p>
+
+<ul>
+<li><a href="spec/range_spec.rb">spec/range_spec.rb</a></li>
+</ul>
+
+<h3>
+<a id="sheet-manipulation" class="anchor" href="#sheet-manipulation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sheet manipulation</h3>
+
+<p>See specifications</p>
+
+<ul>
+<li><a href="spec/sheet_spec.rb">spec/sheet_spec.rb</a></li>
+<li><a href="spec/sheet_selections_spec.rb">spec/sheet_selections_spec.rb</a></li>
+<li><a href="spec/spreadsheet_spec.rb">spec/spreadsheet_spec.rb</a></li>
+<li><a href="spec/content_change_spec.rb">spec/content_change_spec.rb</a></li>
+</ul>
+
+<h3>
+<a id="styles" class="anchor" href="#styles" aria-hidden="true"><span class="octicon octicon-link"></span></a>Styles</h3>
+
+<p>See specifications</p>
+
+<ul>
+<li><a href="spec/styles_spec.rb">spec/styles_spec.rb</a></li>
+</ul>
+
+<h3>
+<a id="engines" class="anchor" href="#engines" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engines</h3>
+
+<p>See specifications</p>
+
+<ul>
+<li><a href="spec/default_engine_spec.rb">spec/default_engine_spec.rb</a></li>
+<li><a href="spec/csv_engine_spec.rb">spec/csv_engine_spec.rb</a></li>
+<li><a href="spec/calculator_engine_spec.rb">spec/calculator_engine_spec.rb</a></li>
+</ul>
+
+<h2>
+<a id="libreoffice-engine" class="anchor" href="#libreoffice-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>LibreOffice engine</h2>
+
+<p>The office engine uses a template file when it writes the output file. It 
+searches for each sheet a template sheet in the template file after its name.</p>
+
+<p>If the engine finds a template sheet, it removes the content and inserts the
+generated rows. If the template sheet contains the header, the engine does
+not remove it (using the <code>has_titles</code> directive).</p>
+
+<p>If the engine does not find a template sheet, it appends a new sheet.</p>
+
+<p>Here is an example:</p>
+
+<div class="highlight highlight-ruby"><pre>engine <span class="pl-k">=</span> <span class="pl-s3">Calco</span>::<span class="pl-s3">OfficeEngine</span>.<span class="pl-k">new</span>(<span class="pl-s1"><span class="pl-pds">'</span>names.ods<span class="pl-pds">'</span></span>)
+
+doc <span class="pl-k">=</span> spreadsheet(engine) <span class="pl-k">do</span>
+
+  definitions <span class="pl-k">do</span>
+
+    set <span class="pl-c1">name:</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>
+
+  <span class="pl-k">end</span>
+
+  sheet(<span class="pl-s1"><span class="pl-pds">'</span>Main<span class="pl-pds">'</span></span>) <span class="pl-k">do</span>
+
+    has_titles <span class="pl-c1">true</span>
+
+    column value_of(<span class="pl-c1">:name</span>)
+
+  <span class="pl-k">end</span>
+
+<span class="pl-k">end</span></pre></div>
+
+<p>The code creates an office engine and sets a template files named <code>names.ods</code>.</p>
+
+<p>The spreadsheet definition defines a sheet named <em>Main</em> and says that the
+template sheet contains the header row (see <code>has_titles true</code>).</p>
+
+<h2>
+<a id="tips" class="anchor" href="#tips" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tips</h2>
+
+<h3>
+<a id="titles-row" class="anchor" href="#titles-row" aria-hidden="true"><span class="octicon octicon-link"></span></a>Titles row...</h3>
+
+<p>The words <em>title</em> or <em>header</em> to refer to the first row of a sheet that
+represent the columns names or labels...</p>
+
+<p>Because spreadsheets do not use row 0, row 0 (using the Sheet#row method) 
+returns headers or empty if no header is set (see 
+<a href="spec/header_row_spec.rb">spec/header_row_spec.rb</a>).</p>
+
+<p>A sheet is marked as having a header row (a first row with titles) by using
+the <code>:title</code> option or the <code>has_titles</code> method.</p>
+
+<p>The use of the header row depends on the engine (the office engine does not
+write the column titles).</p>
+
+<p>The effect is that, if the sheet is marked as having a titles row, the data 
+output starts at index 2, remember 0 is the header row. Otherwise the data 
+starts at index 1. It is important because the formulas contain references like
+<code>A&lt;n&gt;</code> and <code>n</code> must start at 1 if the first row does not contain headers.</p>
+
+<h3>
+<a id="saving-as-csv-files" class="anchor" href="#saving-as-csv-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Saving as CSV files</h3>
+
+<p>The CSV engine writes files containing formulas (functions) instead of computing
+the values. Also, for values like dates and times, it uses function instead of 
+plain strings. If you open the CSV file with <em>LibreOffice</em> (or <em>OpenOffice</em>) it 
+recognizes the functions so that you do no loose the benefit of having 
+formulas/functions.</p>
+
+<p>As an example the output of <a href="examples/write_csv.rb">examples/write_csv.rb</a> is</p>
+
+<pre><code>Start,End,Duration
+"=TIMEVALUE(""12:10:00"")","=TIMEVALUE(""15:30:00"")",=B2-A2
+"=TIMEVALUE(""11:00:00"")","=TIMEVALUE(""16:30:00"")",=B3-A3
+"=TIMEVALUE(""10:01:00"")","=TIMEVALUE(""12:05:00"")",=B4-A4
+"","",=SUM(C1:C4)
+</code></pre>
+
+<p>If you open the file with <em>LibreOffice</em> you get something like</p>
+
+<pre><code>Start     End       Duration
+12:10:00  15:30:00  03:20:00
+11:00:00  16:30:00  05:30:00
+10:01:00  12:05:00  02:04:00
+                    10:54:00
+</code></pre>
+
+<p>The time values are real time values, not strings. The formulas are computed.</p>
+
+<h2>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<ol>
+<li>cross-sheet references</li>
+<li>specs for office engine
+
+<ul>
+<li>currencies</li>
+<li>percentages</li>
+<li>time</li>
+<li>date, now</li>
+<li>absolute $A$5</li>
+<li>styles (both formulas and values)</li>
+</ul>
+</li>
+<li>CSV engine (using the calculator)</li>
+</ol>
+
+<h2>
+<a id="done" class="anchor" href="#done" aria-hidden="true"><span class="octicon octicon-link"></span></a>Done</h2>
+
+<ol>
+<li>specs: func not found, add func, func arity (also check error)</li>
+<li>build-in function, improve with function registration with types and args,
+create <code>date_functions.rb</code>, etc.</li>
+<li>replace "Left" function implementation with build-in mechanism</li>
+<li>add example showing the function registration</li>
+<li>split into files...</li>
+<li>improve ugly code in 'element.rb)'</li>
+<li>refactor document 'save'</li>
+<li>'DefaultEngine' should implement 'save' method</li>
+<li>add a 'calculator' engine (as an example)</li>
+<li>simple calculator engine should use internal context for computation</li>
+<li>specs for simple calculator engine
+
+<ul>
+<li>string values</li>
+<li>with titles and function</li>
+<li>column title/names =&gt; used in output</li>
+<li>absolute cells reference</li>
+<li>skip cells</li>
+</ul>
+</li>
+<li>spreadsheets have no row '0', 0 always refers to header row</li>
+<li>specs for errors
+
+<ul>
+<li>err: unknown var</li>
+<li>err: unknown function</li>
+<li>err: assign the same var twice</li>
+<li>err: declare the function and var twice</li>
+<li>err: ArgumentError =&gt; <code>column :price, 'pp'</code> ('title:' missing)</li>
+<li>err: column id not found</li>
+</ul>
+</li>
+<li>specs for sheet
+
+<ul>
+<li>accept expressions like: <code>function actual_price: 1 + (tax_rate / 100)</code>
+</li>
+<li>last sheet is current</li>
+<li>setting current sheet =&gt; <code>doc.sheet("a").current</code>
+</li>
+</ul>
+</li>
+<li>ids for columns
+
+<ul>
+<li>err: id for column not found</li>
+</ul>
+</li>
+<li>spec for CSV engine
+
+<ul>
+<li><code>=DOLLAR(A1,2)</code></li>
+<li><code>=SUM(A1:A3)</code></li>
+<li>DOLLAR for formula cell</li>
+<li>DOLLAR and include conditional style <code>=DOLLAR((A3/100)+STYLE(IF(CURRENT()&gt;3,"Red","Green")))</code>
+</li>
+<li>% type specification</li>
+</ul>
+</li>
+<li>specs for Spreadsheet
+
+<ul>
+<li>Spreadsheet#row(n) returns value of current sheet</li>
+</ul>
+</li>
+<li>removed engine explicit dependency for Element(s), engine is injected by
+sheets using Sheet#compile</li>
+<li>fixed elements generate methods that did not return values using engine</li>
+<li>spec for default engine
+
+<ul>
+<li>skip columns, sheet#row returns ''</li>
+</ul>
+</li>
+<li>API to change engine</li>
+<li>changed office example to use conditional styles</li>
+<li>added <code>empty_row</code> (in all engines)</li>
+<li>explained examples in top of files</li>
+<li>wrote a gem description, reused examples</li>
+<li>use formula when applying dynamic styles to values</li>
+<li>mutliple sheets</li>
+</ol>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
