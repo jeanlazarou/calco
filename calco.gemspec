@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["jean.lazarou@alef1.org"]
   gem.description   = %q{Implements a DSL used to create and define the content of spreadsheet documents}
   gem.summary       = %q{DSL for spreadsheet documents}
-  gem.homepage      = "https://github.com/jeanlazarou/calco"
+  gem.homepage      = "http://jeanlazarou.github.io/calco/"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
