@@ -19,7 +19,7 @@ module Calco
       
         temp_file = Tempfile.new("office-gen-sheet-")
 
-        stream = open(temp_file, 'w:utf-8')
+        stream = File.open(temp_file, 'w:utf-8')
         
         h[k] = Descriptor.new(stream, temp_file, false)
         
@@ -74,7 +74,7 @@ module Calco
       
       Zip::File.open(@ods_template) do |zipfile|
         content = zipfile.read("content.xml")
-        open(content_xml_file, "w") {|out| out.write content}
+        File.open(content_xml_file, "w") {|out| out.write content}
       end
       
     end
