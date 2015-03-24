@@ -16,7 +16,7 @@ def relative_path file
   File.join(File.dirname(__FILE__), file)
 end
 
-engine = Calco::OfficeEngine.new(relative_path('multiplication_tables.ods'), false)
+engine = Calco::OfficeEngine.new(relative_path('multiplication_tables.ods'))
 
 doc = spreadsheet(engine) do
 
