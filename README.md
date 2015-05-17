@@ -8,7 +8,7 @@ data snapshot.
 The code generating the `CSV` file can run several times but we have to manually
 re-create the spreadsheet document.
 
-*Calco* tries to separate the data from the spreadsheet presentation and the all
+*Calco* tries to separate the data from the spreadsheet presentation and all
 the calculations.
 
 *Calco* implements a DSL (domain specific language) that abstracts the 
@@ -24,7 +24,7 @@ useful to check the spreadsheet definition.
 
 A spreadsheet contains one or more sheets.
 
-A sheet contain cells (viewed as rows and columns).
+A sheet contains cells (viewed as rows and columns).
 
 A cell can contain:
 
